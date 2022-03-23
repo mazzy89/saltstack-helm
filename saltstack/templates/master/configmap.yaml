@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "saltstack.master.fullname" . }}
+  labels:
+    {{- include "saltstack.master.labels" . | nindent 4 }}
+data:
+  master.conf: |
+    {
+      "user": "salt",
+      "log_level": "{{ .Values.master.config.log_level }}"
+    }

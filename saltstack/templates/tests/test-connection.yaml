@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "saltstack.fullname" . }}:{{ .Values.master.service.port }}']
+      args: ['{{ include "saltstack.fullname" . }}:{{ .Values.master.services.api.port }}']
   restartPolicy: Never

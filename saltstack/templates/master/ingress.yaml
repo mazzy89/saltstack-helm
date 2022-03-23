@@ -1,6 +1,6 @@
 {{- if .Values.master.ingress.enabled -}}
 {{- $fullName := include "saltstack.master.fullname" . -}}
-{{- $svcPort := .Values.master.service.port -}}
+{{- $svcPort := .Values.master.services.api.port -}}
 {{- if and .Values.master.ingress.className (not (semverCompare ">=1.18-0" .Capabilities.KubeVersion.GitVersion)) }}
   {{- if not (hasKey .Values.master.ingress.annotations "kubernetes.io/ingress.class") }}
   {{- $_ := set .Values.master.ingress.annotations "kubernetes.io/ingress.class" .Values.master.ingress.className}}
@@ -49,7 +49,7 @@ spec:
             backend:
               {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
               service:
-                name: {{ $fullName }}
+                name: {{ $fullName }}-api
                 port:
                   number: {{ $svcPort }}
               {{- else }}

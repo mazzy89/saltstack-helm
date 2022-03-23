@@ -1,23 +1,39 @@
 apiVersion: v1
-kind: Service
+kind: List
 metadata:
   name: {{ include "saltstack.master.fullname" . }}
-  labels:
-    {{- include "saltstack.master.labels" . | nindent 4 }}
-spec:
-  type: {{ .Values.master.service.type }}
-  ports:
-    - port: {{ .Values.master.service.port }}
-      targetPort: http
-      protocol: TCP
-      name: http
-    - port: 4505
-      targetPort: salt-pub
-      protocol: TCP
-      name: salt-pub
-    - port: 4506
-      targetPort: salt-req
-      protocol: TCP
-      name: salt-req
-  selector:
-    {{- include "saltstack.master.selectorLabels" . | nindent 4 }}
+items:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: {{ include "saltstack.master.fullname" . }}-api
+      labels:
+        {{- include "saltstack.master.labels" $ | nindent 8 }}
+    spec:
+      type: {{ .Values.master.services.api.type }}
+      ports:
+        - port: {{ .Values.master.services.api.port }}
+          targetPort: http
+          protocol: TCP
+          name: http
+      selector:
+        {{- include "saltstack.master.selectorLabels" . | nindent 8}}
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: {{ include "saltstack.master.fullname" . }}
+      labels:
+        {{- include "saltstack.master.labels" . | nindent 8 }}
+    spec:
+      type: {{ .Values.master.services.salt.type }}
+      ports:
+        - port: 4505
+          targetPort: publish
+          protocol: TCP
+          name: publish
+        - port: 4506
+          targetPort: return
+          protocol: TCP
+          name: return
+      selector:
+        {{- include "saltstack.master.selectorLabels" . | nindent 8 }}
