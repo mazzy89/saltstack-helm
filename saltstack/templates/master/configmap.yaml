@@ -8,5 +8,37 @@ data:
   master.conf: |
     {
       "user": "salt",
+      "fileserver_backend": [
+        "gitfs"
+      ],
+      "gitfs_provider": "pygit2",
+      {{- range .Values.master.config.gitfs_remotes }}
+      "gitfs_remotes": [
+        {{ . | quote }}
+      ],
+      {{- end }}
+      {{- if .Values.master.config.ext_pillar.git }}
+      "ext_pillar": [
+        {
+          "git": [
+            {{- range .Values.master.config.ext_pillar.git }}
+            {
+              "{{ .branch }} {{ .remote }}": [
+                {{- if .root }}
+                {
+                  "root": {{ .root | quote }}
+                }
+                {{- end }}
+              ]
+            }
+            {{- end }}
+          ]
+        }
+      ],
+      {{- end }}
+      {{- if .Values.master.config.gitfs_root }}
+      "gitfs_root": {{ .Values.master.config.gitfs_root | quote }},
+      {{- end }}
+      "gitfs_update_interval": 60,
       "log_level": "{{ .Values.master.config.log_level }}"
     }
