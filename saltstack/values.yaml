@@ -84,5 +84,16 @@ master:
 
   affinity: {}
 
+  persistence:
+    enabled: enabled
+    name: pki
+    #  existingClaim: ""
+    accessMode: ReadWriteOnce
+    size: 60Mi
+    # storageClass: ""
+    path: /etc/salt/pki
+    annotations: {}
+    # subPath: "" # only mount a subpath of the Volume into the pod
+
   config:
     log_level: info

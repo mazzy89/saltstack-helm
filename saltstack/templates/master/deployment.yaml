@@ -63,6 +63,12 @@ spec:
             periodSeconds: 10
           resources:
             {{- toYaml .Values.master.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ .Values.master.persistence.name }}
+              mountPath: {{ .Values.master.persistence.path }}
+              {{- if .Values.master.persistence.subPath }}
+              subPath: {{ .Values.master.persistence.subPath }}
+              {{- end }}
       {{- with .Values.master.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
@@ -75,3 +81,11 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+      volumes:
+        - name: {{ .Values.master.persistence.name }}
+          {{- if .Values.master.persistence.enabled }}
+          persistentVolumeClaim:
+            claimName: {{ default (include "saltstack.master.fullname" .) .Values.master.persistence.existingClaim }}
+          {{- else }}
+          emptyDir: {}
+          {{- end }}

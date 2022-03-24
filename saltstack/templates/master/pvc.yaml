@@ -1,0 +1,22 @@
+{{- if and .Values.master.persistence.enabled (not .Values.master.persistence.existingClaim) -}}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "saltstack.master.fullname" . }}
+  annotations:
+  {{- with .Values.master.persistence.annotations  }}
+  {{ toYaml . | nindent 4 }}
+  {{- end }}
+    helm.sh/resource-policy: keep
+  labels:
+    {{- include "saltstack.master.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - {{ .Values.master.persistence.accessMode | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.master.persistence.size | quote }}
+  {{- if .Values.master.persistence.storageClass }}
+  storageClassName: {{ .Values.persistence.storageClass | quote }}
+  {{- end }}
+{{- end -}}
