@@ -11,8 +11,9 @@ spec:
       {{- include "saltstack.master.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.master.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/master/configmap.yaml") . | sha256sum }}
+      {{- with .Values.master.podAnnotations }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
